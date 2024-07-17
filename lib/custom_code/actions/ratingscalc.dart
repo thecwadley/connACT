@@ -9,10 +9,13 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 Future<double> ratingscalc(List<int>? ratings) async {
-  int total = 0;
-  for (int i = 0; i < ratings!.length; i++) {
-    total = total + ratings[i];
+  double avgratings = 2.5;
+  if (ratings!.isNotEmpty) {
+    int total = 0;
+    for (int i = 0; i < ratings.length; i++) {
+      total = total + ratings[i];
+    }
+    avgratings = total / ratings.length;
   }
-  double avgratings = total / ratings!.length;
   return avgratings;
 }

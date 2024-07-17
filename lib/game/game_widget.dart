@@ -27,6 +27,9 @@ class _GameWidgetState extends State<GameWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => GameModel());
+
+    _model.textController ??= TextEditingController();
+    _model.textFieldFocusNode ??= FocusNode();
   }
 
   @override
@@ -108,25 +111,60 @@ class _GameWidgetState extends State<GameWidget> {
                     isMultiSelect: false,
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 20.0),
+                  child: FlutterFlowDropDown<String>(
+                    controller: _model.dropDownValueController2 ??=
+                        FormFieldController<String>(null),
+                    options: const [
+                      'Pro',
+                      'Semi-Pro',
+                      'Intermediate',
+                      'Novice',
+                      'Starter'
+                    ],
+                    onChanged: (val) =>
+                        setState(() => _model.dropDownValue2 = val),
+                    width: 390.0,
+                    height: 56.0,
+                    textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: 'Readex Pro',
+                          letterSpacing: 0.0,
+                        ),
+                    hintText: 'Skill level',
+                    icon: Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: FlutterFlowTheme.of(context).secondaryText,
+                      size: 24.0,
+                    ),
+                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                    elevation: 2.0,
+                    borderColor: FlutterFlowTheme.of(context).alternate,
+                    borderWidth: 2.0,
+                    borderRadius: 8.0,
+                    margin: const EdgeInsetsDirectional.fromSTEB(10.0, 4.0, 0.0, 4.0),
+                    hidesUnderline: true,
+                    isOverButton: true,
+                    isSearchable: false,
+                    isMultiSelect: false,
+                  ),
+                ),
                 FlutterFlowDropDown<String>(
-                  controller: _model.dropDownValueController2 ??=
+                  controller: _model.dropDownValueController3 ??=
                       FormFieldController<String>(null),
                   options: const [
-                    'Pro',
-                    'Semi-Pro',
-                    'intermediate',
-                    'novice',
-                    'starter'
+                    'Yes (explain further details in the game description)',
+                    'No'
                   ],
                   onChanged: (val) =>
-                      setState(() => _model.dropDownValue2 = val),
-                  width: 390.0,
+                      setState(() => _model.dropDownValue3 = val),
+                  width: double.infinity,
                   height: 56.0,
                   textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily: 'Readex Pro',
                         letterSpacing: 0.0,
                       ),
-                  hintText: 'Skill level',
+                  hintText: 'Is this a special Olympics game?',
                   icon: Icon(
                     Icons.keyboard_arrow_down_rounded,
                     color: FlutterFlowTheme.of(context).secondaryText,
@@ -137,11 +175,68 @@ class _GameWidgetState extends State<GameWidget> {
                   borderColor: FlutterFlowTheme.of(context).alternate,
                   borderWidth: 2.0,
                   borderRadius: 8.0,
-                  margin: const EdgeInsetsDirectional.fromSTEB(10.0, 4.0, 0.0, 4.0),
+                  margin: const EdgeInsetsDirectional.fromSTEB(16.0, 4.0, 16.0, 4.0),
                   hidesUnderline: true,
                   isOverButton: true,
                   isSearchable: false,
                   isMultiSelect: false,
+                ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
+                  child: TextFormField(
+                    controller: _model.textController,
+                    focusNode: _model.textFieldFocusNode,
+                    autofocus: true,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      labelText: 'Game description ',
+                      labelStyle:
+                          FlutterFlowTheme.of(context).labelMedium.override(
+                                fontFamily: 'Readex Pro',
+                                letterSpacing: 0.0,
+                              ),
+                      hintStyle:
+                          FlutterFlowTheme.of(context).labelMedium.override(
+                                fontFamily: 'Readex Pro',
+                                letterSpacing: 0.0,
+                              ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).alternate,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).primary,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      errorBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).error,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      focusedErrorBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).error,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: 'Readex Pro',
+                          letterSpacing: 0.0,
+                        ),
+                    maxLines: null,
+                    validator:
+                        _model.textControllerValidator.asValidator(context),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
@@ -295,40 +390,59 @@ class _GameWidgetState extends State<GameWidget> {
                   ),
                 ),
                 FFButtonWidget(
-                  onPressed: () async {
-                    _model.documentreference = await actions.gamecreation(
-                      _model.dropDownValue2,
-                      _model.dropDownValue1,
-                      _model.datePicked,
-                      _model.placePickerValue.latLng,
-                      valueOrDefault<String>(
-                        _model.placePickerValue.name,
-                        'Nowhere',
-                      ),
-                    );
+                  onPressed: !((_model.dropDownValue1 != null &&
+                              _model.dropDownValue1 != '') &&
+                          (_model.dropDownValue2 != null &&
+                              _model.dropDownValue2 != '') &&
+                          (_model.dropDownValue3 != null &&
+                              _model.dropDownValue3 != '') &&
+                          (_model.textController.text != '') &&
+                          (_model.placePickerValue.address != '') &&
+                          (_model.datePicked != null))
+                      ? null
+                      : () async {
+                          _model.documentreference = await actions.gamecreation(
+                            _model.dropDownValue2,
+                            _model.dropDownValue1,
+                            _model.datePicked,
+                            _model.placePickerValue.latLng,
+                            valueOrDefault<String>(
+                              _model.placePickerValue.name,
+                              'Nowhere',
+                            ),
+                          );
 
-                    await _model.documentreference!.update({
-                      ...mapToFirestore(
-                        {
-                          'PlayersJoined':
-                              FieldValue.arrayUnion([currentUserReference]),
+                          await _model.documentreference!.update({
+                            ...createGameRecordData(
+                              sport: _model.dropDownValue1,
+                              time: _model.datePicked,
+                              isended: false,
+                              locationname: _model.placePickerValue.name,
+                              skillLevel: _model.dropDownValue2,
+                              gameDescription: _model.textController.text,
+                              specialOlympic: _model.dropDownValue3 != 'No',
+                            ),
+                            ...mapToFirestore(
+                              {
+                                'PlayersJoined': FieldValue.arrayUnion(
+                                    [currentUserReference]),
+                              },
+                            ),
+                          });
+
+                          await currentUserReference!.update({
+                            ...mapToFirestore(
+                              {
+                                'History': FieldValue.arrayUnion(
+                                    [_model.documentreference]),
+                              },
+                            ),
+                          });
+
+                          context.pushNamed('myprofile');
+
+                          setState(() {});
                         },
-                      ),
-                    });
-
-                    await currentUserReference!.update({
-                      ...mapToFirestore(
-                        {
-                          'History':
-                              FieldValue.arrayUnion([_model.documentreference]),
-                        },
-                      ),
-                    });
-
-                    context.pushNamed('myprofile');
-
-                    setState(() {});
-                  },
                   text: 'Create Game',
                   options: FFButtonOptions(
                     height: 40.0,

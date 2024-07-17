@@ -17,10 +17,6 @@ Future<DocumentReference> gamecreation(String? skillLevel, String? sport,
   GeoFirePoint myLocation =
       geo.point(latitude: location!.latitude, longitude: location!.longitude);
   return _firestore.collection('Game').add({
-    'sport': sport,
-    'time': time,
-    'location': myLocation.data,
-    'SkillLevel': skillLevel,
-    'locationname': locationname
+    'GamLocation': myLocation.data,
   });
 }

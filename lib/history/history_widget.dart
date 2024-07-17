@@ -93,7 +93,7 @@ class _HistoryWidgetState extends State<HistoryWidget> {
                 AuthUserStreamWidget(
                   builder: (context) => Builder(
                     builder: (context) {
-                      final game =
+                      final gameFromHistory =
                           (currentUserDocument?.history.toList() ?? [])
                               .toList()
                               .take(30)
@@ -103,9 +103,10 @@ class _HistoryWidgetState extends State<HistoryWidget> {
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
-                        itemCount: game.length,
-                        itemBuilder: (context, gameIndex) {
-                          final gameItem = game[gameIndex];
+                        itemCount: gameFromHistory.length,
+                        itemBuilder: (context, gameFromHistoryIndex) {
+                          final gameFromHistoryItem =
+                              gameFromHistory[gameFromHistoryIndex];
                           return Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 30.0),
@@ -124,7 +125,8 @@ class _HistoryWidgetState extends State<HistoryWidget> {
                                 ),
                               ),
                               child: StreamBuilder<GameRecord>(
-                                stream: GameRecord.getDocument(gameItem),
+                                stream:
+                                    GameRecord.getDocument(gameFromHistoryItem),
                                 builder: (context, snapshot) {
                                   // Customize what your widget looks like when it's loading.
                                   if (!snapshot.hasData) {
@@ -177,7 +179,7 @@ class _HistoryWidgetState extends State<HistoryWidget> {
                                               ),
                                         ),
                                         Text(
-                                          columnGameRecord.skillLevel,
+                                          columnGameRecord.locationname,
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
@@ -186,10 +188,8 @@ class _HistoryWidgetState extends State<HistoryWidget> {
                                               ),
                                         ),
                                         Text(
-                                          valueOrDefault<String>(
-                                            columnGameRecord.locationname,
-                                            'Nowhere',
-                                          ),
+                                          dateTimeFormat('M/d H:mm',
+                                              columnGameRecord.time!),
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
@@ -198,25 +198,8 @@ class _HistoryWidgetState extends State<HistoryWidget> {
                                               ),
                                         ),
                                         Text(
-                                          valueOrDefault<String>(
-                                            dateTimeFormat('M/d H:mm',
-                                                columnGameRecord.time),
-                                            '0',
-                                          ),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily: 'Readex Pro',
-                                                letterSpacing: 0.0,
-                                              ),
-                                        ),
-                                        Text(
-                                          valueOrDefault<String>(
-                                            columnGameRecord
-                                                .playersJoined.length
-                                                .toString(),
-                                            '0',
-                                          ),
+                                          columnGameRecord.playersJoined.length
+                                              .toString(),
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(

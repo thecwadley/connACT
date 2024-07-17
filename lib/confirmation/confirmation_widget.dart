@@ -1,6 +1,7 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/components/ratingdropdown_widget.dart';
+import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -51,6 +52,21 @@ class _ConfirmationWidgetState extends State<ConfirmationWidget> {
         appBar: AppBar(
           backgroundColor: FlutterFlowTheme.of(context).primary,
           automaticallyImplyLeading: false,
+          leading: FlutterFlowIconButton(
+            borderColor: FlutterFlowTheme.of(context).primary,
+            borderRadius: 20.0,
+            borderWidth: 1.0,
+            buttonSize: 40.0,
+            fillColor: FlutterFlowTheme.of(context).accent1,
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: 24.0,
+            ),
+            onPressed: () async {
+              context.safePop();
+            },
+          ),
           title: Text(
             'Page Title',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
@@ -60,31 +76,7 @@ class _ConfirmationWidgetState extends State<ConfirmationWidget> {
                   letterSpacing: 0.0,
                 ),
           ),
-          actions: [
-            FFButtonWidget(
-              onPressed: () async {
-                context.safePop();
-              },
-              text: 'back',
-              options: FFButtonOptions(
-                height: 40.0,
-                padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                color: FlutterFlowTheme.of(context).primary,
-                textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                      fontFamily: 'Readex Pro',
-                      color: Colors.white,
-                      letterSpacing: 0.0,
-                    ),
-                elevation: 3.0,
-                borderSide: const BorderSide(
-                  color: Colors.transparent,
-                  width: 1.0,
-                ),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-          ],
+          actions: const [],
           centerTitle: false,
           elevation: 2.0,
         ),
@@ -125,8 +117,28 @@ class _ConfirmationWidgetState extends State<ConfirmationWidget> {
               ),
               Text(
                 valueOrDefault<String>(
-                  widget.selectedgame?.gamLocation.geopoint?.toString(),
+                  widget.selectedgame?.locationname,
                   'DNE',
+                ),
+                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: 'Readex Pro',
+                      letterSpacing: 0.0,
+                    ),
+              ),
+              Text(
+                valueOrDefault<String>(
+                  widget.selectedgame?.specialOlympic.toString(),
+                  'Nope',
+                ),
+                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: 'Readex Pro',
+                      letterSpacing: 0.0,
+                    ),
+              ),
+              Text(
+                valueOrDefault<String>(
+                  widget.selectedgame?.gameDescription,
+                  'Blablabla',
                 ),
                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                       fontFamily: 'Readex Pro',
@@ -290,14 +302,28 @@ class _ConfirmationWidgetState extends State<ConfirmationWidget> {
                   padding: const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
                   child: FFButtonWidget(
                     onPressed: () async {
-                      await widget.selectedgame!.reference.update({
-                        ...mapToFirestore(
-                          {
-                            'PlayersJoined':
-                                FieldValue.arrayRemove([currentUserReference]),
-                          },
-                        ),
-                      });
+                      final firestoreBatch = FirebaseFirestore.instance.batch();
+                      try {
+                        firestoreBatch.update(widget.selectedgame!.reference, {
+                          ...mapToFirestore(
+                            {
+                              'PlayersJoined': FieldValue.arrayRemove(
+                                  [currentUserReference]),
+                            },
+                          ),
+                        });
+
+                        firestoreBatch.update(currentUserReference!, {
+                          ...mapToFirestore(
+                            {
+                              'History': FieldValue.arrayRemove(
+                                  [widget.selectedgame?.reference]),
+                            },
+                          ),
+                        });
+                      } finally {
+                        await firestoreBatch.commit();
+                      }
                     },
                     text: 'Leave Game',
                     options: FFButtonOptions(

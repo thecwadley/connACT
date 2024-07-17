@@ -1,4 +1,4 @@
-# test app
+# connACT
 
 A new Flutter project.
 

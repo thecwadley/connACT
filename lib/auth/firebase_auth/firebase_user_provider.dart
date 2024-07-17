@@ -5,8 +5,8 @@ import '../base_auth_user_provider.dart';
 
 export '../base_auth_user_provider.dart';
 
-class TestAppFirebaseUser extends BaseAuthUser {
-  TestAppFirebaseUser(this.user);
+class ConnACTFirebaseUser extends BaseAuthUser {
+  ConnACTFirebaseUser(this.user);
   User? user;
   @override
   bool get loggedIn => user != null;
@@ -54,17 +54,17 @@ class TestAppFirebaseUser extends BaseAuthUser {
 
   static BaseAuthUser fromUserCredential(UserCredential userCredential) =>
       fromFirebaseUser(userCredential.user);
-  static BaseAuthUser fromFirebaseUser(User? user) => TestAppFirebaseUser(user);
+  static BaseAuthUser fromFirebaseUser(User? user) => ConnACTFirebaseUser(user);
 }
 
-Stream<BaseAuthUser> testAppFirebaseUserStream() => FirebaseAuth.instance
+Stream<BaseAuthUser> connACTFirebaseUserStream() => FirebaseAuth.instance
         .authStateChanges()
         .debounce((user) => user == null && !loggedIn
             ? TimerStream(true, const Duration(seconds: 1))
             : Stream.value(user))
         .map<BaseAuthUser>(
       (user) {
-        currentUser = TestAppFirebaseUser(user);
+        currentUser = ConnACTFirebaseUser(user);
         return currentUser!;
       },
     );

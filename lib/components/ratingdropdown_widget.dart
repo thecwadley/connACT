@@ -48,7 +48,7 @@ class _RatingdropdownWidgetState extends State<RatingdropdownWidget> {
     return Visibility(
       visible: widget.parameter1 == true,
       child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(70.0, 10.0, 30.0, 10.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 10.0, 10.0),
         child: FlutterFlowDropDown<String>(
           controller: _model.dropDownValueController ??=
               FormFieldController<String>(null),

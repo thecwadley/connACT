@@ -81,9 +81,24 @@ class _JoinGamesWidgetState extends State<JoinGamesWidget> {
                         (games) async {
                           _model.sortedgames = games
                               .where((e) =>
-                                  e.skillLevel ==
+                                  ((valueOrDefault<bool>(
+                                              currentUserDocument
+                                                  ?.specialOlympic,
+                                              false) ==
+                                          false) &&
+                                      (e.specialOlympic == false)) ||
+                                  (valueOrDefault<bool>(
+                                          currentUserDocument?.specialOlympic,
+                                          false) ==
+                                      true))
+                              .toList()
+                              .cast<GameRecord>();
+                          setState(() {});
+                          _model.sortedgames = _model.sortedgames
+                              .where((e) =>
                                   valueOrDefault(
-                                      currentUserDocument?.myskilllevel, ''))
+                                      currentUserDocument?.myskilllevel, '') ==
+                                  e.skillLevel)
                               .toList()
                               .cast<GameRecord>();
                           setState(() {});
@@ -101,8 +116,6 @@ class _JoinGamesWidgetState extends State<JoinGamesWidget> {
                           padding: const EdgeInsetsDirectional.fromSTEB(
                               20.0, 10.0, 20.0, 20.0),
                           child: Container(
-                            width: 100.0,
-                            height: 100.0,
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context)
                                   .secondaryBackground,
@@ -178,6 +191,15 @@ class _JoinGamesWidgetState extends State<JoinGamesWidget> {
                                       gameItem.playersJoined.length.toString(),
                                       '1',
                                     ),
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Readex Pro',
+                                          letterSpacing: 0.0,
+                                        ),
+                                  ),
+                                  Text(
+                                    gameItem.specialOlympic.toString(),
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(

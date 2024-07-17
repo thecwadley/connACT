@@ -20,11 +20,6 @@ class GameRecord extends FirestoreRecord {
   String get sport => _sport ?? '';
   bool hasSport() => _sport != null;
 
-  // "skillLevel" field.
-  String? _skillLevel;
-  String get skillLevel => _skillLevel ?? '';
-  bool hasSkillLevel() => _skillLevel != null;
-
   // "PlayersJoined" field.
   List<DocumentReference>? _playersJoined;
   List<DocumentReference> get playersJoined => _playersJoined ?? const [];
@@ -50,14 +45,31 @@ class GameRecord extends FirestoreRecord {
   String get locationname => _locationname ?? '';
   bool hasLocationname() => _locationname != null;
 
+  // "SkillLevel" field.
+  String? _skillLevel;
+  String get skillLevel => _skillLevel ?? '';
+  bool hasSkillLevel() => _skillLevel != null;
+
+  // "SpecialOlympic" field.
+  bool? _specialOlympic;
+  bool get specialOlympic => _specialOlympic ?? false;
+  bool hasSpecialOlympic() => _specialOlympic != null;
+
+  // "GameDescription" field.
+  String? _gameDescription;
+  String get gameDescription => _gameDescription ?? '';
+  bool hasGameDescription() => _gameDescription != null;
+
   void _initializeFields() {
     _sport = snapshotData['sport'] as String?;
-    _skillLevel = snapshotData['skillLevel'] as String?;
     _playersJoined = getDataList(snapshotData['PlayersJoined']);
     _gamLocation = LocationStruct.maybeFromMap(snapshotData['GamLocation']);
     _time = snapshotData['Time'] as DateTime?;
     _isended = snapshotData['Isended'] as bool?;
     _locationname = snapshotData['locationname'] as String?;
+    _skillLevel = snapshotData['SkillLevel'] as String?;
+    _specialOlympic = snapshotData['SpecialOlympic'] as bool?;
+    _gameDescription = snapshotData['GameDescription'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -95,20 +107,24 @@ class GameRecord extends FirestoreRecord {
 
 Map<String, dynamic> createGameRecordData({
   String? sport,
-  String? skillLevel,
   LocationStruct? gamLocation,
   DateTime? time,
   bool? isended,
   String? locationname,
+  String? skillLevel,
+  bool? specialOlympic,
+  String? gameDescription,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
       'sport': sport,
-      'skillLevel': skillLevel,
       'GamLocation': LocationStruct().toMap(),
       'Time': time,
       'Isended': isended,
       'locationname': locationname,
+      'SkillLevel': skillLevel,
+      'SpecialOlympic': specialOlympic,
+      'GameDescription': gameDescription,
     }.withoutNulls,
   );
 
@@ -125,23 +141,27 @@ class GameRecordDocumentEquality implements Equality<GameRecord> {
   bool equals(GameRecord? e1, GameRecord? e2) {
     const listEquality = ListEquality();
     return e1?.sport == e2?.sport &&
-        e1?.skillLevel == e2?.skillLevel &&
         listEquality.equals(e1?.playersJoined, e2?.playersJoined) &&
         e1?.gamLocation == e2?.gamLocation &&
         e1?.time == e2?.time &&
         e1?.isended == e2?.isended &&
-        e1?.locationname == e2?.locationname;
+        e1?.locationname == e2?.locationname &&
+        e1?.skillLevel == e2?.skillLevel &&
+        e1?.specialOlympic == e2?.specialOlympic &&
+        e1?.gameDescription == e2?.gameDescription;
   }
 
   @override
   int hash(GameRecord? e) => const ListEquality().hash([
         e?.sport,
-        e?.skillLevel,
         e?.playersJoined,
         e?.gamLocation,
         e?.time,
         e?.isended,
-        e?.locationname
+        e?.locationname,
+        e?.skillLevel,
+        e?.specialOlympic,
+        e?.gameDescription
       ]);
 
   @override

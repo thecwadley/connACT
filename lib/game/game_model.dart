@@ -13,6 +13,13 @@ class GameModel extends FlutterFlowModel<GameWidget> {
   // State field(s) for DropDown widget.
   String? dropDownValue2;
   FormFieldController<String>? dropDownValueController2;
+  // State field(s) for DropDown widget.
+  String? dropDownValue3;
+  FormFieldController<String>? dropDownValueController3;
+  // State field(s) for TextField widget.
+  FocusNode? textFieldFocusNode;
+  TextEditingController? textController;
+  String? Function(BuildContext, String?)? textControllerValidator;
   // State field(s) for PlacePicker widget.
   FFPlace placePickerValue = const FFPlace();
   DateTime? datePicked;
@@ -25,5 +32,7 @@ class GameModel extends FlutterFlowModel<GameWidget> {
   @override
   void dispose() {
     unfocusNode.dispose();
+    textFieldFocusNode?.dispose();
+    textController?.dispose();
   }
 }

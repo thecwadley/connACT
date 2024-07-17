@@ -80,6 +80,11 @@ class UsersRecord extends FirestoreRecord {
   String get photostring => _photostring ?? '';
   bool hasPhotostring() => _photostring != null;
 
+  // "SpecialOlympic" field.
+  bool? _specialOlympic;
+  bool get specialOlympic => _specialOlympic ?? false;
+  bool hasSpecialOlympic() => _specialOlympic != null;
+
   void _initializeFields() {
     _email = snapshotData['email'] as String?;
     _displayName = snapshotData['display_name'] as String?;
@@ -94,6 +99,7 @@ class UsersRecord extends FirestoreRecord {
     _defaultpic = snapshotData['Defaultpic'] as String?;
     _history = getDataList(snapshotData['History']);
     _photostring = snapshotData['photostring'] as String?;
+    _specialOlympic = snapshotData['SpecialOlympic'] as bool?;
   }
 
   static CollectionReference get collection =>
@@ -141,6 +147,7 @@ Map<String, dynamic> createUsersRecordData({
   String? bio,
   String? defaultpic,
   String? photostring,
+  bool? specialOlympic,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -155,6 +162,7 @@ Map<String, dynamic> createUsersRecordData({
       'Bio': bio,
       'Defaultpic': defaultpic,
       'photostring': photostring,
+      'SpecialOlympic': specialOlympic,
     }.withoutNulls,
   );
 
@@ -179,7 +187,8 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         listEquality.equals(e1?.rating, e2?.rating) &&
         e1?.defaultpic == e2?.defaultpic &&
         listEquality.equals(e1?.history, e2?.history) &&
-        e1?.photostring == e2?.photostring;
+        e1?.photostring == e2?.photostring &&
+        e1?.specialOlympic == e2?.specialOlympic;
   }
 
   @override
@@ -196,7 +205,8 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e?.rating,
         e?.defaultpic,
         e?.history,
-        e?.photostring
+        e?.photostring,
+        e?.specialOlympic
       ]);
 
   @override
